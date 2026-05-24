@@ -5,7 +5,12 @@ export interface Usuario {
   nome: string;
   username: string;
   email: string;
-  perfil: 'coordenador' | 'almoxarife' | 'tecnico';
+  perfil: string;
+  perfilDetalhe?: {
+    id: string;
+    nome: string;
+    slug: string;
+  };
 }
 
 export interface AuthResponse {
@@ -14,18 +19,8 @@ export interface AuthResponse {
 }
 
 export const authService = {
-  async login(username: string, senha: string): Promise<AuthResponse> {
-    return api.post<AuthResponse>('/auth/login', { username, senha });
-  },
-
-  async register(data: {
-    nome: string;
-    username: string;
-    email: string;
-    senha: string;
-    perfil: string;
-  }): Promise<AuthResponse> {
-    return api.post<AuthResponse>('/auth/register', data);
+  async login(email: string, senha: string): Promise<AuthResponse> {
+    return api.post<AuthResponse>('/auth/login', { email, senha });
   },
 
   async me(): Promise<Usuario> {
@@ -34,5 +29,9 @@ export const authService = {
 
   async forgotPassword(email: string): Promise<{ message: string }> {
     return api.post<{ message: string }>('/auth/forgot-password', { email });
+  },
+
+  async impersonate(id: string): Promise<AuthResponse> {
+    return api.post<AuthResponse>(`/auth/impersonate/${id}`, {});
   },
 };

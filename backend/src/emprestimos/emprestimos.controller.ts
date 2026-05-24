@@ -32,13 +32,13 @@ export class EmprestimosController {
   }
 
   @Post()
-  @Roles('almoxarife', 'coordenador')
+  @Roles('tecnico', 'almoxarife')
   create(@Body() dto: CreateEmprestimoDto, @CurrentUser() user: any) {
     return this.service.create(dto, user.id);
   }
 
   @Patch(':id/devolver')
-  @Roles('almoxarife', 'coordenador')
+  @Roles('tecnico', 'almoxarife')
   devolver(@Param('id') id: string, @Body('observacoes') observacoes?: string) {
     return this.service.devolver(id, observacoes);
   }

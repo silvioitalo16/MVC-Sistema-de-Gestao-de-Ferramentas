@@ -7,12 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Perfil {
-  coordenador
-  almoxarife
-  tecnico
-}
-
 enum EstadoFerramenta {
   disponivel
   emprestada
@@ -45,16 +39,32 @@ model Usuario {
   username  String   @unique
   email     String   @unique
   senha     String
-  perfil    Perfil   @default(tecnico)
+  perfilId  String
   ativo     Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  perfil Perfil @relation(fields: [perfilId], references: [id])
 
   emprestimos  Emprestimo[]  @relation("ResponsavelEmprestimo")
   solicitacoes Solicitacao[] @relation("SolicitanteId")
   registros    Emprestimo[]  @relation("RegistradoPorId")
 
   @@map("usuarios")
+}
+
+model Perfil {
+  id        String   @id @default(uuid())
+  nome      String
+  slug      String   @unique
+  descricao String?
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  usuarios Usuario[]
+
+  @@map("perfis")
 }
 
 model Ferramenta {

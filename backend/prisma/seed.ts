@@ -5,14 +5,37 @@ const prisma = new PrismaClient();
 
 async function main() {
   const hash = (pwd: string) => bcrypt.hashSync(pwd, 10);
+  const adminEmail = process.env.ADMIN_INITIAL_EMAIL || 'admin@local';
+  const adminPassword = process.env.ADMIN_INITIAL_PASSWORD || 'admin123';
 
-  await prisma.usuario.createMany({
+  await prisma.perfil.createMany({
     skipDuplicates: true,
     data: [
-      { nome: 'Coordenador de Manutenção', username: 'coordenador', email: 'coordenador@microservice.com', senha: hash('coord123'), perfil: 'coordenador' },
-      { nome: 'Almoxarife do Sistema', username: 'almoxarife', email: 'almoxarife@microservice.com', senha: hash('almox123'), perfil: 'almoxarife' },
-      { nome: 'Técnico Colaborador', username: 'tecnico', email: 'tecnico@microservice.com', senha: hash('tecnico123'), perfil: 'tecnico' },
+      { nome: 'Coordenador', slug: 'coordenador', descricao: 'Acesso total ao sistema' },
+      { nome: 'Almoxarife', slug: 'almoxarife', descricao: 'Operacao de estoque e emprestimos' },
+      { nome: 'Tecnico', slug: 'tecnico', descricao: 'Consulta e solicitacoes de ferramentas' },
+      { nome: 'Administrador', slug: 'admin', descricao: 'Cadastro de usuarios e perfis' },
     ],
+  });
+
+  const perfis = await prisma.perfil.findMany({
+    where: { slug: { in: ['coordenador', 'almoxarife', 'tecnico', 'admin'] } },
+  });
+  const perfilBySlug = Object.fromEntries(perfis.map((perfil) => [perfil.slug, perfil.id]));
+
+  await prisma.solicitacao.deleteMany();
+  await prisma.emprestimo.deleteMany();
+  await prisma.usuario.deleteMany();
+
+  await prisma.usuario.create({
+    data: {
+      nome: 'Administrador do Sistema',
+      username: 'admin',
+      email: adminEmail,
+      senha: hash(adminPassword),
+      perfilId: perfilBySlug['admin'],
+      ativo: true,
+    },
   });
 
   await prisma.ferramenta.createMany({

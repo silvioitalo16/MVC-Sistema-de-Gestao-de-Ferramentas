@@ -15,7 +15,7 @@ const statusConfig: Record<string, string> = {
 
 export default function EmprestimosPage() {
   const { user } = useAuth();
-  const canOperate = user?.perfil === 'almoxarife';
+  const canOperate = user?.perfil === 'tecnico' || user?.perfil === 'almoxarife';
   const [emprestimos, setEmprestimos] = useState<Emprestimo[]>([]);
   const [ferramentas, setFerramentas] = useState<Ferramenta[]>([]);
   const [usuarios, setUsuarios] = useState<UsuarioLista[]>([]);
@@ -94,7 +94,7 @@ export default function EmprestimosPage() {
                   <th className="text-left px-4 py-3 text-xs font-medium text-gray-500">Ferramenta</th>
                   <th className="text-left px-4 py-3 text-xs font-medium text-gray-500">Responsável</th>
                   <th className="text-left px-4 py-3 text-xs font-medium text-gray-500">Retirada</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500">Prev. Devolução</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500">Devolução Real</th>
                   <th className="text-left px-4 py-3 text-xs font-medium text-gray-500">Status</th>
                   <th className="px-4 py-3" />
                 </tr>
@@ -110,7 +110,9 @@ export default function EmprestimosPage() {
                     </td>
                     <td className="px-4 py-3 text-gray-700">{e.responsavel.nome}</td>
                     <td className="px-4 py-3 text-gray-500 text-xs">{new Date(e.dataRetirada).toLocaleDateString('pt-BR')}</td>
-                    <td className="px-4 py-3 text-gray-500 text-xs">{new Date(e.dataDevolucaoPrevista).toLocaleDateString('pt-BR')}</td>
+                    <td className="px-4 py-3 text-gray-500 text-xs">
+                      {e.dataDevolucaoReal ? new Date(e.dataDevolucaoReal).toLocaleDateString('pt-BR') : '—'}
+                    </td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${statusConfig[e.status]}`}>
                         {e.status.charAt(0).toUpperCase() + e.status.slice(1)}

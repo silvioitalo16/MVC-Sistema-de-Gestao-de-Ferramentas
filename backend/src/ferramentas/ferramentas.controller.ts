@@ -36,25 +36,25 @@ export class FeramentasController {
   }
 
   @Post()
-  @Roles('almoxarife', 'coordenador')
+  @Roles('almoxarife')
   create(@Body() dto: CreateFerramentaDto) {
     return this.service.create(dto);
   }
 
   @Put(':id')
-  @Roles('almoxarife', 'coordenador')
+  @Roles('almoxarife')
   update(@Param('id') id: string, @Body() dto: Partial<CreateFerramentaDto>) {
     return this.service.update(id, dto);
   }
 
   @Patch(':id/estado')
-  @Roles('almoxarife', 'coordenador')
+  @Roles('almoxarife')
   updateEstado(@Param('id') id: string, @Body('estado') estado: EstadoFerramenta) {
     return this.service.updateEstado(id, estado);
   }
 
   @Delete(':id')
-  @Roles('almoxarife', 'coordenador')
+  @Roles('almoxarife')
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }
